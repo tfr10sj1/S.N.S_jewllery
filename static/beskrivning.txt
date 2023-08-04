@@ -1,0 +1,13 @@
+* kommer in i websidan 
+    - ser protyper 
+    - klickbara prototyper
+        -finns färdiga 
+        -inte färdiga 
+            - gör egen:
+                -välj bild, matrial, form, antal
+        - Egen prototyp färdiga
+
+    - pris
+    - välj betal sätt
+    - adress, välj datum, vill du ha det som present?
+    

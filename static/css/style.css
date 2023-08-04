@@ -1,0 +1,245 @@
+
+
+
+/* Styles for screens with a maximum width of 600px (e.g., smartphones) */
+@media (max-width: 600px) {
+  /* Add your responsive styles here */
+  .w3-third img {
+    border: 2px solid #4CAF50;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Styles for screens with a width between 601px and 1200px (e.g., tablets) */
+@media (min-width: 601px) and (max-width: 1200px) {
+  /* Add your responsive styles here */
+  .w3-third img {
+    border: 2px solid #4CAF50;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Styles for screens with a minimum width of 1201px (e.g., desktops) */
+@media (min-width: 1201px) {
+  /* Add your responsive styles here */
+  .w3-third img {
+    border: 3px solid #4CAF50;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Rest of your CSS styles */
+/* ... */
+
+
+
+/* Lägg till en grön kant runt bilderna */
+.w3-third img {
+  border: 3px solid  #4CAF50;
+  border-radius: 5px; /* Lägg till en liten rundning på hörnen */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Justera värdena för att ändra skuggans utseende */
+}
+body,
+    h1 {
+      font-family: "Montserrat", sans-serif
+    }
+
+    img {
+      margin-bottom: -7px
+    }
+
+    .w3-row-padding img {
+      margin-bottom: 12px
+    }
+
+    /* Styling for the image container */
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    #output-image-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50vh;
+      /* Anpassa höjden efter behov */
+      margin-top: 50px;
+      /* Justera detta värde för att flytta output-rutan uppåt */
+    }
+
+    #output-image {
+      width: 100px;
+      height: 100px;
+    }
+
+    /* Styling for the reference border */
+    .reference-border-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 500px;
+      height: 500px;
+      margin: 10px;
+      overflow: hidden;
+    }
+
+    .reference-border {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      clip-path: circle(50% at 50% 50%);
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    /* Styling for dynamic clip paths for reference borders */
+    .round-shape {
+      clip-path: circle(50%, 50%, 50%);
+    }
+
+    .oval-shape {
+      clip-path: ellipse(30% 50% at 50% 50%);
+      /* Uppdaterad */
+    }
+
+    .rectangle-shape {
+      clip-path: inset(0% 10%);
+    }
+
+    .square-shape {
+      clip-path: inset(0%);
+    }
+
+    .triangle-shape {
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      
+    }
+
+    .oktogon-shape {
+      clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    }
+
+    .hexagon-shape {
+      clip-path: polygon(50% 0%, 83% 25%, 83% 75%, 50% 100%, 17% 75%, 17% 25%);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .parallelogram-shape {
+      clip-path:  polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .heart-shape {
+      clip-path: url(#heartPath);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .rabbet-shape {
+      clip-path: polygon(0% 15%, 15% 15%, 15% 0%, 85% 0%, 85% 15%, 100% 15%, 100% 85%, 85% 85%, 85% 100%, 15% 100%, 15% 85%, 0% 85%);
+    }
+
+    .star-shape {
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+    .dodicagram-shape{
+      clip-path: polygon(100.00% 50.00%,78.98% 57.76%,93.30% 75.00%,71.21% 71.21%,75.00% 93.30%,57.76% 78.98%,50.00% 100.00%,42.24% 78.98%,25.00% 93.30%,28.79% 71.21%,6.70% 75.00%,21.02% 57.76%,0.00% 50.00%,21.02% 42.24%,6.70% 25.00%,28.79% 28.79%,25.00% 6.70%,42.24% 21.02%,50.00% 0.00%,57.76% 21.02%,75.00% 6.70%,71.21% 28.79%,93.30% 25.00%,78.98% 42.24%);
+    }
+
+    /* Styling for input containers */
+    .input-container {
+      display: inline-block;
+
+      font-size: 16px;
+      padding: 16px;
+      border: 2px solid #ccc;
+      border-radius: 1cm;
+      width: 200px;
+      margin: 10px;
+    }
+
+    /* Styling for slider labels */
+    label {
+      display: block;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    /* Styling for sliders */
+    input[type="number"],
+    input[type="range"] {
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 10px;
+    }
+
+    /* Styling for the "Bearbeta" button */
+    button {
+      margin-top: 0px;
+      padding: 1px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    /* Stil för knappen */
+    #back-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: #45a049;
+    }
+
+    /* Stil för "Välj fil" knappen */
+    #upload-button {
+      background-color: #4CAF50;
+      font-size: 18px;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-bottom: -30px;
+      padding: 20px 40px;
+    }
+
+    #upload-image {
+      display: none;
+    }
+
+    #shape-select {
+      font-size: 16px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      width: 140px;
+      border-radius: 10px;
+      margin: 1px;
+      background-color: #f1f1f1;
+      /* Bakgrundsfärg när listan inte är aktiv */
+      color: #333;
+      /* Textfärg */
+    }
+
+    /* Stil för pilen på select-elementet */
+    #shape-select::after {
+      content: '\25BC';
+      /* Pil nedåt */
+      position: absolute;
+      top: 10px;
+      right: 15px;
+    }
+
+    /* Stil för select-elementet när den är aktiv */
+    #shape-select:focus {
+      outline: none;
+      border-color: #4CAF50;
+      /* Ändra färgen för ramen när select-elementet är aktivt */
+      box-shadow: 0 0 5px #4CAF50;
+      /* Lägg till en skugga när select-elementet är aktivt */
+      background-color: #ffff;
+      /* Ändra bakgrundsfärgen när listan är aktiv */
+    }

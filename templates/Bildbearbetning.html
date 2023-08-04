@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JEWELRY-STORE</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+
+<body>
+  <div class="w3-clear"></div>
+ 
+  </div>
+  <div class="w3-clear"></div>
+  <header class="w3-center w3-margin-bottom">
+    <h1><b>Bildbearbetning</b></h1>
+  </header>
+  </div>
+  <!-- Knapp för att gå tillbaka till startsidan -->
+  <button id="back-button" onclick="goToHomePage()"><i class="fa fa-arrow-circle-left"></i> Tillbaka till
+    startsidan</button>
+
+  <div class="input-container">
+    <label for="rotate-input">&#10112; Välj fil:</label>
+    <!-- Hidden file input that is triggered by the styled "Välj fil" button -->
+    <input type="file" id="upload-image" accept="image/*">
+    <label for="upload-image" id="upload-button"><i class="fa fa-file-picture-o"
+        style="font-size:36px"></i></label><br><br>
+  </div>
+  <!-- Placera SVG-elementet med clipPath här -->
+  <svg width="0" height="0">
+    <defs>
+      <clipPath id="heartPath" clipPathUnits="objectBoundingBox">
+        <path d="M0.5,1
+        C 0.5,1,0,0.7,0,0.3
+        A 0.25,0.25,1,1,1,0.5,0.3
+        A 0.25,0.25,1,1,1,1,0.3
+        C 1,0.7,0.5,1,0.5,1 Z" />
+      </clipPath>
+    </defs>
+  </svg>
+  
+  <!--This is a fallback image if SVG is not supported 
+    <object data="static/images/customClipPath.svg" type="image/svg+xml">
+     
+    <img src="static/images/ja.jpg" alt="Image with custom clip path">
+  </object>-->
+
+  <div class="input-container">
+    <label for="shape-select"> &#10113; Välj form:</label><br><br>
+    <select class="" id="shape-select">
+      <option value="round">Rund</option>
+      <option value="oval">Oval</option>
+      <option value="rectangle">Rektangel</option>
+      <option value="square">Kvadrat</option>
+      <option value="triangle">Triangel</option>
+      <option value="oktogon">Oktogon</option>
+      <option value="hexagon">Hexagon</option>
+      <option value="parallelogram">Parallelogram</option>
+      <option value="heart">Hjärta</option>
+      <option value="rabbet">Rabbet</option>
+      <option value="star">Sjärna</option>
+      <option value="dodicagram">Dodicagram</option>
+
+    </select>
+    <br>
+    <br>
+  </div>
+
+  <div class="input-container">
+    <label for="rotate-input">&#10114; Rotera (grader):</label><br><br>
+    <input type="number" id="rotate-input" value="0" min="-360" max="360">
+    <br><input type="range" id="rotate-slider" min="-360" max="360" value="0" step="1">
+  </div>
+
+  <div class="input-container">
+    <label for="width-input">&#10115; Bredd:</label><br><br>
+    <input type="number" id="width-input" value="500" min="100" max="5000">
+    <br><input type="range" id="width-slider" min="100" max="5000" value="500" step="10">
+  </div>
+
+  <div class="input-container">
+    <label for="height-input">&#10116; Längd:</label><br><br>
+    <input type="number" id="height-input" value="500" min="100" max="5000">
+    <br><input type="range" id="height-slider" min="100" max="5000" value="500" step="10">
+  </div>
+
+  <div class="input-container">
+    <label for="horizontal-input">&#10117; Horisontell position:</label><br>
+    <input type="number" id="horizontal-input" value="0" min="-250" max="250">
+    <input type="range" id="horizontal-slider" min="-250" max="250" value="0" step="1">
+  </div>
+
+  <div class="input-container">
+    <label for="vertical-input">&#10118; Vertikal position:</label><br><br>
+    <input type="number" id="vertical-input" value="0" min="-250" max="250">
+    <br><input type="range" id="vertical-slider" min="-250" max="250" value="0" step="1">
+  </div>
+
+  <div id="output-image-container">
+    <div class="reference-border-container">
+      <div id="reference-border" class="reference-border">
+        <canvas id="output-image-canvas" width="500" height="500"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <br><br><button onclick="processImage()">Bearbeta</button>
+
+  <!-- Footer -->
+  <footer class="w3-container w3-padding-64 w3-light-grey w3-center w3-opacity w3-xlarge" style="margin-top:128px">
+    <i class="fa fa-facebook-official w3-hover-opacity"></i>
+    <i class="fa fa-instagram w3-hover-opacity"></i>
+    <i class="fa fa-snapchat w3-hover-opacity"></i>
+    <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+    <i class="fa fa-twitter w3-hover-opacity"></i>
+    <i class="fa fa-linkedin w3-hover-opacity"></i>
+    <p class="w3-medium">Powered by <a href="" target="_blank" class="w3-hover-text-green">SJ</a></p>
+  </footer>
+  <script>
+    // Funktion för att gå tillbaka till startsidan när knappen klickas
+    function goToHomePage() {
+      window.location.href = "index.html";
+    }
+
+    // Funktion för att uppdatera bilden när något ändras
+    function updateImage() {
+      processImage();
+    }
+
+    // Lyssna på ändringar i slidern för rotation
+    document.getElementById("rotate-slider").addEventListener("input", function () {
+      document.getElementById("rotate-input").value = this.value;
+      updateImage();
+    });
+
+    // Lyssna på ändringar i inputfältet för rotation
+    document.getElementById("rotate-input").addEventListener("input", function () {
+      document.getElementById("rotate-slider").value = this.value;
+      updateImage();
+    });
+
+    // Lyssna på ändringar i slidern för bredd
+    document.getElementById("width-slider").addEventListener("input", function () {
+      document.getElementById("width-input").value = this.value;
+      updateImage();
+    });
+
+    // Lyssna på ändringar i inputfältet för bredd
+    document.getElementById("width-input").addEventListener("input", function () {
+      document.getElementById("width-slider").value = this.value;
+      updateImage();
+    });
+
+    // Lyssna på ändringar i slidern för längd
+    document.getElementById("height-slider").addEventListener("input", function () {
+      document.getElementById("height-input").value = this.value;
+      updateImage();
+    });
+
+    // Lyssna på ändringar i inputfältet för längd
+    document.getElementById("height-input").addEventListener("input", function () {
+      document.getElementById("height-slider").value = this.value;
+      updateImage();
+    });
+
+    // Lyssna på ändringar i slidern för horisontell position
+    document.getElementById("horizontal-slider").addEventListener("input", function () {
+      document.getElementById("horizontal-input").value = this.value;
+      updateImage();
+    });
+
+    // Lyssna på ändringar i inputfältet för horisontell position
+    document.getElementById("horizontal-input").addEventListener("input", function () {
+      document.getElementById("horizontal-slider").value = this.value;
+      updateImage();
+    });
+
+    // Lyssna på ändringar i slidern för vertikal position
+    document.getElementById("vertical-slider").addEventListener("input", function () {
+      document.getElementById("vertical-input").value = this.value;
+      updateImage();
+    });
+
+    // Lyssna på ändringar i inputfältet för vertikal position
+    document.getElementById("vertical-input").addEventListener("input", function () {
+      document.getElementById("vertical-slider").value = this.value;
+      updateImage();
+    });
+
+    // Lyssna på ändringar i "Välj fil" inputfältet
+    document.getElementById("upload-image").addEventListener("change", function () {
+      updateImage();
+    });
+
+    // Lyssna på ändringar i "Välj form" inputfältet
+    document.getElementById("shape-select").addEventListener("change", function () {
+      updateImage();
+    });
+
+    function processImage() {
+      var selectedShape = document.getElementById("shape-select").value;
+      // Bearbeta bilden för övriga former (rund, oval, rektangel, kvadrat, triangel, oktogon)
+      var rotationAngle = parseInt(document.getElementById("rotate-input").value);
+      var widthSliderValue = parseInt(document.getElementById("width-slider").value);
+      var heightSliderValue = parseInt(document.getElementById("height-slider").value);
+      var width = Math.min(widthSliderValue, 5000);
+      var height = Math.min(heightSliderValue, 5000);
+      var horizontalOffset = parseInt(document.getElementById("horizontal-input").value);
+      var verticalOffset = parseInt(document.getElementById("vertical-input").value);
+      var inputImage = document.getElementById("upload-image").files[0];
+      var reader = new FileReader();
+
+      reader.onload = function (event) {
+        var image = new Image();
+        image.src = event.target.result;
+
+        image.onload = function () {
+          var canvas = document.getElementById("output-image-canvas");
+          var ctx = canvas.getContext("2d");
+
+          // Rensa canvas
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Rita svart kantreferens för vald form
+          document.getElementById("reference-border").className = "reference-border " + selectedShape + "-shape";
+
+          // Bearbeta och visa bilden baserat på vald form
+          ctx.save();
+          ctx.translate(canvas.width / 2 + horizontalOffset, canvas.height / 2 + verticalOffset);
+          ctx.rotate((rotationAngle * Math.PI) / 180);
+          ctx.drawImage(image, -width / 2, -height / 2, width, height);
+          ctx.restore();
+        };
+      };
+      reader.readAsDataURL(inputImage);
+    }
+
+  </script>
+
+</body>
+
+</html>
