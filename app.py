@@ -1,14 +1,32 @@
-from flask import Flask, render_template
+import logging
+import sqlite3
+import os
+import bcrypt
 
-app = Flask(__name__)
+import uuid
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session
+from werkzeug.utils import secure_filename
+from flask_session import Session
 
-@app.route('/')
+app = Flask(__name__, static_folder='./static')
+
+@app.route('/teplates' , methods=['GET'])
 def index():
-    return render_template('index.html')
+    # Establish a connection to the database
+    conn = sqlite3.connect('webshop.db')
+    cursor = conn.cursor()
 
-@app.route('/bildbearbetning')
+    # Fetch the product information from the database
+    cursor.execute('SELECT name, price, metal_type FROM products')
+    products = cursor.fetchall()
+
+    conn.close()
+    print(products)
+    return render_template('index.html', products=products)
+
+@app.route('/bildbearbetning' , methods=['POST'])
 def bildbearbetning():
-    return render_template('/Bildbearbetning.html')
+    return render_template('Bildbearbetning.html')
 
 if __name__ == '__main__':
     app.run()
