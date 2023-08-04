@@ -110,10 +110,12 @@
   </div>
 
 
+  <!-- Visa den bearbetade bilden här -->
+  <img src="{{ processed_image_path }}" alt="Bearbetad Bild" style="width: 50%">
+
 
   {% if product_info %}
   <p>Bildbearbetning för: {{ product_info.name }}</p>
-  <!-- Visa bearbetad bild här -->
   <br><br><button onclick="completeProcess()">Slutför Bearbetning</button>
   {% else %}
   <p>Ingen produktinformation tillgänglig</p>
@@ -247,10 +249,57 @@
       reader.readAsDataURL(inputImage);
     }
 
-    function completeProcess() {
-  // Visa meddelande om bearbetning slutförd och omdirigera till startsidan
-  alert('Bearbetning slutförd');
-  window.location.href = '/index';
+function completeProcess() {
+  // Hämta referens till den bearbetade bilden på canvasen
+  var canvas = document.getElementById("output-image-canvas");
+  var ctx = canvas.getContext("2d");
+
+  // Rensa canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Rita den bearbetade bilden på canvasen
+  var image = new Image();
+  image.src = document.getElementById("reference-image").src;
+
+  image.onload = function () {
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    // Hämta referens till canvasens data som en Data URL
+    var processedImage = canvas.toDataURL("image/jpeg");
+
+    // Skapa ett Blob-objekt från Data URL
+    var processedBlob = dataURItoBlob(processedImage);
+
+    // Skapa ett FormData-objekt för att skicka bilden
+    var formData = new FormData();
+    formData.append('processed_image', processedBlob, 'processed.jpg');
+
+    // Skicka POST-begäran med FormData till servern för att spara bearbetad bild och information
+    fetch('/saveProcessedData', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Bearbetning slutförd');
+        window.location.href = '/index';
+      } else {
+        alert('Något gick fel vid sparning');
+      }
+    });
+  };
+}
+
+// Funktion för att konvertera Data URL till Blob
+function dataURItoBlob(dataURI) {
+  var byteString = atob(dataURI.split(',')[1]);
+  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+  var ab = new ArrayBuffer(byteString.length);
+  var ia = new Uint8Array(ab);
+  for (var i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  return new Blob([ab], { type: mimeString });
 }
 
      
