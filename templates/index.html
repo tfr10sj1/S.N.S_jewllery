@@ -71,12 +71,13 @@ img {margin-bottom: -7px}
 </header>
 </div>
 
+
 <!-- Photo Grid -->
 <div class="w3-center">
   <div class="w3-row" id="myGrid" style="margin-bottom:40px">
     {% for product in products %}
       <div class="w3-third">
-        <a href="/processImage">
+        <a href="/processImage?name={{ product[0] }}&price={{ product[1] }}&weight={{ product[2] }}&metal_type={{ product[3] }}">
           <img src="/static/images/bild{{ loop.index }}.jpg" alt="Smycken" style="width:50%">
         </a>
         <p>{{ product[0] }} <br><b>Pris: {{ product[1] }} sek</b></p>

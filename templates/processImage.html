@@ -13,7 +13,7 @@
 
 <body>
   <div class="w3-clear"></div>
- 
+
   </div>
   <div class="w3-clear"></div>
   <header class="w3-center w3-margin-bottom">
@@ -31,7 +31,6 @@
     <label for="upload-image" id="upload-button"><i class="fa fa-file-picture-o"
         style="font-size:36px"></i></label><br><br>
   </div>
-  
   <!-- Placera SVG-elementet med clipPath här -->
   <svg width="0" height="0">
     <defs>
@@ -44,7 +43,7 @@
       </clipPath>
     </defs>
   </svg>
-  
+
   <!--This is a fallback image if SVG is not supported 
     <object data="static/images/customClipPath.svg" type="image/svg+xml">
      
@@ -73,35 +72,34 @@
   </div>
 
   <div class="input-container">
-    <label for="rotate-input">&#10112; Rotera (grader):</label><br><br>
-    <input type="number" id="rotate-input" value="0" min="-360" max="360" title="Rotation in degrees">
+    <label for="rotate-input">&#10114; Rotera (grader):</label><br><br>
+    <input type="number" id="rotate-input" value="0" min="-360" max="360">
     <br><input type="range" id="rotate-slider" min="-360" max="360" value="0" step="1">
   </div>
-  
+
   <div class="input-container">
     <label for="width-input">&#10115; Bredd:</label><br><br>
-    <input type="number" id="width-input" value="500" min="100" max="5000" title="Width in pixels">
+    <input type="number" id="width-input" value="500" min="100" max="5000">
     <br><input type="range" id="width-slider" min="100" max="5000" value="500" step="10">
   </div>
-  
+
   <div class="input-container">
     <label for="height-input">&#10116; Längd:</label><br><br>
-    <input type="number" id="height-input" value="500" min="100" max="5000" title="Height in pixels">
+    <input type="number" id="height-input" value="500" min="100" max="5000">
     <br><input type="range" id="height-slider" min="100" max="5000" value="500" step="10">
   </div>
-  
+
   <div class="input-container">
     <label for="horizontal-input">&#10117; Horisontell position:</label><br>
-    <input type="number" id="horizontal-input" value="0" min="-250" max="250" title="Horizontal position">
+    <input type="number" id="horizontal-input" value="0" min="-250" max="250">
     <input type="range" id="horizontal-slider" min="-250" max="250" value="0" step="1">
   </div>
-  
+
   <div class="input-container">
     <label for="vertical-input">&#10118; Vertikal position:</label><br><br>
-    <input type="number" id="vertical-input" value="0" min="-250" max="250" title="Vertical position">
+    <input type="number" id="vertical-input" value="0" min="-250" max="250">
     <br><input type="range" id="vertical-slider" min="-250" max="250" value="0" step="1">
   </div>
-  
 
   <div id="output-image-container">
     <div class="reference-border-container">
@@ -111,8 +109,15 @@
     </div>
   </div>
 
-  <br><br><button onclick="processImage()">Bearbeta</button>
 
+
+  {% if product_info %}
+  <p>Bildbearbetning för: {{ product_info.name }}</p>
+  <!-- Visa bearbetad bild här -->
+  <br><br><button onclick="completeProcess()">Slutför Bearbetning</button>
+  {% else %}
+  <p>Ingen produktinformation tillgänglig</p>
+  {% endif %}
   <!-- Footer -->
   <footer class="w3-container w3-padding-64 w3-light-grey w3-center w3-opacity w3-xlarge" style="margin-top:128px">
     <i class="fa fa-facebook-official w3-hover-opacity"></i>
@@ -126,7 +131,7 @@
   <script>
     // Funktion för att gå tillbaka till startsidan när knappen klickas
     function goToHomePage() {
-      window.location.href = "index.html";
+      window.location.href = "/index";
     }
 
     // Funktion för att uppdatera bilden när något ändras
@@ -242,6 +247,13 @@
       reader.readAsDataURL(inputImage);
     }
 
+    function completeProcess() {
+  // Visa meddelande om bearbetning slutförd och omdirigera till startsidan
+  alert('Bearbetning slutförd');
+  window.location.href = '/index';
+}
+
+     
   </script>
 
 </body>
