@@ -31,6 +31,7 @@
     <label for="upload-image" id="upload-button"><i class="fa fa-file-picture-o"
         style="font-size:36px"></i></label><br><br>
   </div>
+  
   <!-- Placera SVG-elementet med clipPath här -->
   <svg width="0" height="0">
     <defs>
@@ -72,34 +73,35 @@
   </div>
 
   <div class="input-container">
-    <label for="rotate-input">&#10114; Rotera (grader):</label><br><br>
-    <input type="number" id="rotate-input" value="0" min="-360" max="360">
+    <label for="rotate-input">&#10112; Rotera (grader):</label><br><br>
+    <input type="number" id="rotate-input" value="0" min="-360" max="360" title="Rotation in degrees">
     <br><input type="range" id="rotate-slider" min="-360" max="360" value="0" step="1">
   </div>
-
+  
   <div class="input-container">
     <label for="width-input">&#10115; Bredd:</label><br><br>
-    <input type="number" id="width-input" value="500" min="100" max="5000">
+    <input type="number" id="width-input" value="500" min="100" max="5000" title="Width in pixels">
     <br><input type="range" id="width-slider" min="100" max="5000" value="500" step="10">
   </div>
-
+  
   <div class="input-container">
     <label for="height-input">&#10116; Längd:</label><br><br>
-    <input type="number" id="height-input" value="500" min="100" max="5000">
+    <input type="number" id="height-input" value="500" min="100" max="5000" title="Height in pixels">
     <br><input type="range" id="height-slider" min="100" max="5000" value="500" step="10">
   </div>
-
+  
   <div class="input-container">
     <label for="horizontal-input">&#10117; Horisontell position:</label><br>
-    <input type="number" id="horizontal-input" value="0" min="-250" max="250">
+    <input type="number" id="horizontal-input" value="0" min="-250" max="250" title="Horizontal position">
     <input type="range" id="horizontal-slider" min="-250" max="250" value="0" step="1">
   </div>
-
+  
   <div class="input-container">
     <label for="vertical-input">&#10118; Vertikal position:</label><br><br>
-    <input type="number" id="vertical-input" value="0" min="-250" max="250">
+    <input type="number" id="vertical-input" value="0" min="-250" max="250" title="Vertical position">
     <br><input type="range" id="vertical-slider" min="-250" max="250" value="0" step="1">
   </div>
+  
 
   <div id="output-image-container">
     <div class="reference-border-container">

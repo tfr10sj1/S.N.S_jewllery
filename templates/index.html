@@ -76,11 +76,10 @@ img {margin-bottom: -7px}
   <div class="w3-row" id="myGrid" style="margin-bottom:40px">
     {% for product in products %}
       <div class="w3-third">
-        <a href="/templates/Bildbearbetning.html">
+        <a href="/processImage">
           <img src="/static/images/bild{{ loop.index }}.jpg" alt="Smycken" style="width:50%">
-          {{ loop.index }} <!-- Här visar vi värdet av loop.index -->
         </a>
-        <p>{{ product.name }} <br><b>{{ product.price }} sek</b></p>
+        <p>{{ product[0] }} <br><b>Pris: {{ product[1] }} sek</b></p>
       </div>
     {% endfor %}
   </div>

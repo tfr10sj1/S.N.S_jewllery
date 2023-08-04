@@ -1,7 +1,7 @@
 import logging
 import sqlite3
 import os
-import bcrypt
+import json
 
 import uuid
 from flask import Flask, jsonify, render_template, request, redirect, url_for, session
@@ -10,23 +10,22 @@ from flask_session import Session
 
 app = Flask(__name__, static_folder='./static')
 
-@app.route('/teplates' , methods=['GET'])
+@app.route('/')
 def index():
     # Establish a connection to the database
     conn = sqlite3.connect('webshop.db')
     cursor = conn.cursor()
 
-    # Fetch the product information from the database
-    cursor.execute('SELECT name, price, metal_type FROM products')
+    # Fetch product details from the database
+    cursor.execute('SELECT name, price FROM products')
     products = cursor.fetchall()
 
     conn.close()
-    print(products)
     return render_template('index.html', products=products)
 
-@app.route('/bildbearbetning' , methods=['POST'])
+@app.route('/processImage' , methods=['GET'])
 def bildbearbetning():
-    return render_template('Bildbearbetning.html')
+    return render_template('processImage.html')
 
 if __name__ == '__main__':
     app.run()
