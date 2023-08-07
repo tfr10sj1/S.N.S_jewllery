@@ -15,9 +15,6 @@
 
 <body>
   <div class="w3-clear"></div>
-
-  </div>
-  <div class="w3-clear"></div>
   <header class="w3-center w3-margin-bottom">
     <h1><b>Bildbearbetning</b></h1>
   </header>
@@ -244,10 +241,10 @@
       reader.readAsDataURL(inputImage);
     }
 
-    function saveProcessedImage() {
+    /*function saveProcessedImage() {
       var canvas = document.getElementById("output-image-canvas");
       var link = document.getElementById("download-link");
-
+      
       // Skapa en kopia av canvasen
       var canvasCopy = document.createElement("canvas");
       canvasCopy.width = canvas.width;
@@ -265,7 +262,81 @@
         // Namnge filen och ändra ladda ner-attributet beroende på ditt behov
         link.download = "processed_image.png"; // Ändra till ".jpg" om du vill ha JPG-format
       });
-    }
+    }*/
+/*
+function saveProcessedImage() {
+  var canvas = document.getElementById("output-image-canvas");
+  var image = canvas.toDataURL("image/png"); // Konvertera canvas till Data URL
+
+  var blob = dataURItoBlob(image);
+  var formData = new FormData();
+  formData.append('image', blob);
+
+  fetch('/save', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data.message); // Visar serverns svar
+  });
+}*/
+
+function clipToCircle(ctx, x, y, radius) {
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, 2 * Math.PI);
+  ctx.closePath();
+  ctx.clip();
+}
+function saveProcessedImage() {
+  var canvas = document.getElementById("output-image-canvas");
+  var ctx = canvas.getContext("2d");
+  var image = canvas.toDataURL("image/png"); // Konvertera canvas till Data URL
+
+  var blob = dataURItoBlob(image);
+  var formData = new FormData();
+  formData.append('image', blob);
+
+  // Skapa en kopia av canvas för att tillämpa cirkulär klippning
+  var circularCanvas = document.createElement("canvas");
+  circularCanvas.width = canvas.width;
+  circularCanvas.height = canvas.height;
+  var circularCtx = circularCanvas.getContext("2d");
+
+  // Applicera cirkulär klippning på den kopiösa canvasen
+  clipToCircle(circularCtx, canvas.width / 2, canvas.height / 2, Math.min(canvas.width, canvas.height) / 2);
+  circularCtx.drawImage(canvas, 0, 0);
+
+  // Konvertera den cirkulära canvasen till Data URL
+  var circularImage = circularCanvas.toDataURL("image/png");
+
+  // Skicka den cirkulära bilden till servern
+  var circularBlob = dataURItoBlob(circularImage);
+  formData.append('circular_image', circularBlob);
+
+  fetch('/save', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data.message); // Visar serverns svar
+  });
+}
+
+
+
+function dataURItoBlob(dataURI) {
+  var byteString = atob(dataURI.split(',')[1]);
+  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+  var ab = new ArrayBuffer(byteString.length);
+  var ia = new Uint8Array(ab);
+  for (var i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  return new Blob([ab], { type: mimeString });
+}
+
   </script>
 </body>
 

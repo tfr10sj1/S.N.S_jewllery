@@ -80,7 +80,37 @@ def save_processed_data():
         session.pop('product_info', None)
     return redirect('/index')
 
+'''
+@app.route('/save', methods=['POST'])
+def save_image():
+    try:
+        uploaded_file = request.files['image']
+        if uploaded_file.filename != '':
+            saved_path = os.path.join('static/orders', 'processed_image.png')  # Ange din målmapp här
+            uploaded_file.save(saved_path)
+            return jsonify({'message': 'Bilden har sparats på servern.'})
+        else:
+            return jsonify({'error': 'Ingen fil har laddats upp.'}), 400
+    except Exception as e:
+        error_message = 'Fel vid sparande av bilden: ' + str(e)
+        print(error_message)
+        return jsonify({'error': error_message}), 500
+'''
 
+@app.route('/save', methods=['POST'])
+def save_image():
+    try:
+        uploaded_file = request.files['circular_image']  # Använd 'circular_image' istället för 'image'
+        if uploaded_file.filename != '':
+            saved_path = os.path.join('static/orders', 'circular_processed_image.png') # Ändra filnamnet eller sökvägen om du vill
+            uploaded_file.save(saved_path)
+            return jsonify({'message': 'Bilden har sparats på servern.'})
+        else:
+            return jsonify({'error': 'Ingen fil har laddats upp.'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    
 # Visa orderhistorik
 @app.route('/orderHistory')
 def order_history():

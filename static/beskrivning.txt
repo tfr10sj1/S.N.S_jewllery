@@ -10,4 +10,7 @@
     - pris
     - välj betal sätt
     - adress, välj datum, vill du ha det som present?
+
+
     
+    (https://wetransfer.com/ för att skicka stora filer)
