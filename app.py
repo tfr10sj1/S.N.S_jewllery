@@ -55,7 +55,6 @@ def process_image():
     return render_template('processImage.html', product_info=product_info)
 
 @app.route('/saveProcessedData', methods=['POST'])
-
 def save_processed_data():
     product_info = session.get('product_info')
 
@@ -81,37 +80,6 @@ def save_processed_data():
         session.pop('product_info', None)
     return redirect('/index')
 
-# Slutför bearbetning och spara i databasen och orders-mappen
-@app.route('/completeProcess', methods=['POST'])
-def complete_process():
-    product_info = session.get('product_info')
-    
-    if product_info:
-        # Hämta data från session och splitta det
-        product_data = product_info.split(',')
-        name = product_data[0]
-        price = product_data[1]
-        weight = product_data[2]
-        metal_type = product_data[3]
-        
-        # Anropa din funktion för att bearbeta bilden
-        processed_image = process_image()  # Ersätt med din faktiska funktion
-        
-        # Spara den bearbetade bilden i "orders" mappen
-        processed_image_path = os.path.join(app.config['ORDERS_FOLDER'], f'{name}.jpg')
-        processed_image.save(processed_image_path)
-        
-        # Spara informationen i databasen
-        conn = get_items_db_connection()
-        cursor = conn.cursor()
-        cursor.execute('INSERT INTO items (name, price, weight, metal_type, image_path) VALUES (?, ?, ?, ?, ?)',
-                       (name, price, weight, metal_type, processed_image_path))
-        conn.commit()
-        conn.close()
-        
-        # Ta bort produktinfo från sessionen
-        session.pop('product_info', None)
-    return redirect('/index')
 
 # Visa orderhistorik
 @app.route('/orderHistory')

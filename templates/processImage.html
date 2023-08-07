@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvg@1.5.3/dist/canvg.min.js"></script>
+
 </head>
 
 <body>
@@ -44,14 +46,6 @@
     </defs>
   </svg>
 
-  <!--This is a fallback image if SVG is not supported 
-    <object data="static/images/customClipPath.svg" type="image/svg+xml">
-     
-    <img src="static/images/ja.jpg" alt="Image with custom clip path">
-  </object>-->
-
-  
-  <canvas id="shapeCanvas" width="500" height="500"></canvas>
   <div class="input-container">
     <label for="shape-select"> &#10113; Välj form:</label><br><br>
     <select class="" id="shape-select">
@@ -67,7 +61,6 @@
       <option value="rabbet">Rabbet</option>
       <option value="star">Sjärna</option>
       <option value="dodicagram">Dodicagram</option>
-
     </select>
     <br>
     <br>
@@ -112,18 +105,14 @@
   </div>
 
 
-  <!-- Visa den bearbetade bilden här
-  <img src="{{ processed_image_path }}" alt="Bearbetad Bild" style="width: 50%"> -->
-
-
   {% if product_info %}
   <p>Bildbearbetning för: {{ product_info.name }}</p>
-  <br><br>
-  <canvas id="shapeCanvas"></canvas>
-  <br><br><button onclick="processAndSaveShape()">Bearbeta och Spara</button>
+  <button onclick="saveProcessedImage()">Spara Bearbetad Bild</button>
+  <a id="download-link" style="display: none;" download="processed_image.jpg">Ladda ner bearbetad bild</a>
   {% else %}
   <p>Ingen produktinformation tillgänglig</p>
   {% endif %}
+
 
   <!-- Footer -->
   <footer class="w3-container w3-padding-64 w3-light-grey w3-center w3-opacity w3-xlarge" style="margin-top:128px">
@@ -211,18 +200,14 @@
       updateImage();
     });
 
-   
     // Lyssna på ändringar i "Välj form" inputfältet
     document.getElementById("shape-select").addEventListener("change", function () {
       updateImage();
-      var selectedShape = this.value;
-      var canvas = document.getElementById("shapeCanvas");
-      var ctx = canvas.getContext("2d");
-      drawShape(ctx, selectedShape); // Rita den valda formen på canvas
     });
-      
+
     function processImage() {
       var selectedShape = document.getElementById("shape-select").value;
+
       // Bearbeta bilden för övriga former (rund, oval, rektangel, kvadrat, triangel, oktogon)
       var rotationAngle = parseInt(document.getElementById("rotate-input").value);
       var widthSliderValue = parseInt(document.getElementById("width-slider").value);
@@ -259,188 +244,29 @@
       reader.readAsDataURL(inputImage);
     }
 
-    function completeProcess() {
-    // Skapa ett FormData-objekt och lägg till produktinformation
-    var formData = new FormData();
-    formData.append('product_info', '{{ product_info }}');
+    function saveProcessedImage() {
+      var canvas = document.getElementById("output-image-canvas");
+      var link = document.getElementById("download-link");
 
-    // Skicka POST-begäran med FormData till servern för att spara bearbetad bild och information
-    fetch('/completeProcess', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => {
-      if (response.ok) {
-        alert('Bearbetning slutförd');
-        window.location.href = '/index';
-      } else {
-        alert('Något gick fel vid sparning');
-      }
-    });
+      // Skapa en kopia av canvasen
+      var canvasCopy = document.createElement("canvas");
+      canvasCopy.width = canvas.width;
+      canvasCopy.height = canvas.height;
+      var ctxCopy = canvasCopy.getContext("2d");
+      ctxCopy.drawImage(canvas, 0, 0);
 
-  }
+      // Skapa en Blob från canvasens innehåll
+      canvasCopy.toBlob(function (blob) {
+        // Skapa en Blob-länk för nedladdning
+        var blobURL = URL.createObjectURL(blob);
+        link.href = blobURL;
+        link.style.display = "block";
 
-
-  // Funktion för att konvertera Data URL till Blob
-  function dataURItoBlob(dataURI) {
-    var byteString = atob(dataURI.split(',')[1]);
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
+        // Namnge filen och ändra ladda ner-attributet beroende på ditt behov
+        link.download = "processed_image.png"; // Ändra till ".jpg" om du vill ha JPG-format
+      });
     }
-    return new Blob([ab], { type: mimeString });
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-  var canvas = document.getElementById('shapeCanvas');
-  var ctx = canvas.getContext('2d');
-  
-});
-
-// Funktion för att bearbeta bilden och spara den med den valda formen
-function processAndSaveShape() {
-  var selectedShape = document.getElementById("shape-select").value;
-
-  // Skapa en temporär canvas för att rita den valda formen
-  var tempCanvas = document.createElement("canvas");
-  tempCanvas.width = 500; // Justera beroende på din design
-  tempCanvas.height = 500; // Justera beroende på din design
-  var tempCtx = tempCanvas.getContext("2d");
-
-  // Rita den valda formen på den temporära canvasen
-  drawShape(tempCtx, selectedShape);
-
-  // Skapa en Image-objekt från den temporära canvasen
-  var shapeImage = new Image();
-  shapeImage.src = tempCanvas.toDataURL("image/png");
-
-  // Rita den valda formen på den faktiska canvasen
-  var canvas = document.getElementById("shapeCanvas");
-  var ctx = canvas.getContext("2d");
-  drawShape(ctx, selectedShape);
-
-  // Konvertera canvasbilden till en Blob
-  shapeImage.onload = function () {
-    canvas.toBlob(function (blob) {
-      // Skicka Blob till servern för att spara som bild
-      var formData = new FormData();
-      formData.append("shape_image", blob);
-
-      // Skicka POST-begäran med FormData till servern för att spara bearbetad bild
-      fetch("/saveShapeImage", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            alert("Bild av form sparad");
-          } else {
-            alert("Något gick fel vid sparandet av bilden");
-          }
-        });
-    });
-  };
-}
-
-// Funktion för att rita en vald form på en given canvas-kontext
-function drawShape(ctx, shape) {
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-  switch (shape) {
-    case "round":
-      // Rita rund form
-      ctx.beginPath();
-      ctx.arc(ctx.canvas.width / 2, ctx.canvas.height / 2, ctx.canvas.width / 2, 0, 2 * Math.PI);
-      ctx.closePath();
-      ctx.fillStyle = "blue"; // Justera färgen om önskat
-      ctx.fill();
-      ctx.drawImage(
-      image,
-      canvas.width / 2 + horizontalOffset - width / 2,
-      canvas.height / 2 + verticalOffset - height / 2,
-      width,
-      height
-    );
-      break;
-    case "oval":
-      // Rita oval form
-      ctx.beginPath();
-      ctx.ellipse(
-        ctx.canvas.width / 2,
-        ctx.canvas.height / 2,
-        ctx.canvas.width * 0.3,
-        ctx.canvas.height * 0.5,
-        0,
-        0,
-        2 * Math.PI
-      );
-      ctx.closePath();
-      ctx.fillStyle = "green"; // Justera färgen om önskat
-      ctx.fill();
-      break;
-    case "rectangle":
-      // Rita rektangel form
-      ctx.fillStyle = "red"; // Justera färgen om önskat
-      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      break;
-    case "square":
-      // Rita kvadratform
-      ctx.fillStyle = "yellow"; // Justera färgen om önskat
-      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      break;
-    case "triangle":
-      // Rita triangel
-      ctx.beginPath();
-      ctx.moveTo(ctx.canvas.width / 2, 0);
-      ctx.lineTo(0, ctx.canvas.height);
-      ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
-      ctx.closePath();
-      ctx.fillStyle = "orange"; // Justera färgen om önskat
-      ctx.fill();
-      break;
-    case "oktogon":
-      // Rita oktogon
-      ctx.beginPath();
-      ctx.moveTo(ctx.canvas.width * 0.3, 0);
-      ctx.lineTo(ctx.canvas.width * 0.7, 0);
-      ctx.lineTo(ctx.canvas.width, ctx.canvas.height * 0.3);
-      // ... Rita resten av oktogonen
-      ctx.closePath();
-      ctx.fillStyle = "purple"; // Justera färgen om önskat
-      ctx.fill();
-      break;
-    case "hexagon":
-      // Rita hexagon
-      ctx.beginPath();
-      ctx.moveTo(ctx.canvas.width * 0.5, 0);
-      ctx.lineTo(ctx.canvas.width * 0.83, ctx.canvas.height * 0.25);
-      // ... Rita resten av hexagonen
-      ctx.closePath();
-      ctx.fillStyle = "pink"; // Justera färgen om önskat
-      ctx.fill();
-      break;
-    case "parallelogram":
-      // Rita parallelogram
-      ctx.beginPath();
-      ctx.moveTo(ctx.canvas.width * 0.25, 0);
-      ctx.lineTo(ctx.canvas.width, 0);
-      // ... Rita resten av parallelogramen
-      ctx.closePath();
-      ctx.fillStyle = "brown"; // Justera färgen om önskat
-      ctx.fill();
-      break;
-    // Lägg till andra former här...
-    default:
-      break;
-  }
-}
-
- 
   </script>
-
 </body>
 
 </html>
