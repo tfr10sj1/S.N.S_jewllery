@@ -100,9 +100,9 @@ def save_image():
 @app.route('/save', methods=['POST'])
 def save_image():
     try:
-        uploaded_file = request.files['circular_image']  # Använd 'circular_image' istället för 'image'
+        uploaded_file = request.files['shape_image']  # Använd 'circular_image' istället för 'image'
         if uploaded_file.filename != '':
-            saved_path = os.path.join('static/orders', 'circular_processed_image.png') # Ändra filnamnet eller sökvägen om du vill
+            saved_path = os.path.join('static/orders', 'processed_image.png') # Ändra filnamnet eller sökvägen om du vill
             uploaded_file.save(saved_path)
             return jsonify({'message': 'Bilden har sparats på servern.'})
         else:
