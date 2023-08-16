@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, session, jsonify, redirect, s
 import os
 import sqlite3
 from shutil import copyfile
-
+import logging
 app = Flask(__name__, static_folder='./static')
 app.secret_key = 'your_secret_key_here'
 
@@ -65,50 +65,45 @@ def save_processed_data():
 
         # Spara den bearbetade bilden
         processed_image = request.files['processed_image']
-        image_filename = f'static/orders/{name}.jpg'  # Uppdaterad sökväg
+        session_num = session.get("session_num", 0) + 1
+        session["session_num"] = session_num
+        image_filename = os.path.join(app.config['ORDERS_FOLDER'], f'{name}_session_{session_num}.jpg')
         processed_image.save(image_filename)
 
+
         # Spara information i databasen
-        conn = get_items_db_connection()
+        conn = get_items_db_connection()  # Ersätt med din funktion för att få en databasanslutning
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO items (name, price, weight, metal_type, image_filename) VALUES (?, ?, ?, ?, ?)',
-                       (name, product_data[1], product_data[2], product_data[3], image_filename))
+        cursor.execute('INSERT INTO items (name, price, weight, metal_type, image_url) VALUES (?, ?, ?, ?, ?)',
+                       (name, product_data[1], product_data[2], product_data[3], os.path.basename(image_filename)))
         conn.commit()
         conn.close()
 
         # Ta bort produktinfo från sessionen
         session.pop('product_info', None)
+    
     return redirect('/index')
 
-'''
 @app.route('/save', methods=['POST'])
 def save_image():
     try:
-        uploaded_file = request.files['image']
-        if uploaded_file.filename != '':
-            saved_path = os.path.join('static/orders', 'processed_image.png')  # Ange din målmapp här
-            uploaded_file.save(saved_path)
-            return jsonify({'message': 'Bilden har sparats på servern.'})
-        else:
+        uploaded_file = request.files.get('image')  # Use 'image' as the key
+        if not uploaded_file:
             return jsonify({'error': 'Ingen fil har laddats upp.'}), 400
-    except Exception as e:
-        error_message = 'Fel vid sparande av bilden: ' + str(e)
-        print(error_message)
-        return jsonify({'error': error_message}), 500
-'''
 
-@app.route('/save', methods=['POST'])
-def save_image():
-    try:
-        uploaded_file = request.files['shape_image']  # Använd 'circular_image' istället för 'image'
-        if uploaded_file.filename != '':
-            saved_path = os.path.join('static/orders', 'processed_image.png') # Ändra filnamnet eller sökvägen om du vill
-            uploaded_file.save(saved_path)
-            return jsonify({'message': 'Bilden har sparats på servern.'})
-        else:
-            return jsonify({'error': 'Ingen fil har laddats upp.'}), 400
+        if uploaded_file.filename == '':
+            return jsonify({'error': 'Tomt filnamn. Ingen fil har laddats upp.'}), 400
+
+        saved_path = os.path.join('static/orders', 'processed_image.png') # Use '.png' as the file extension
+        uploaded_file.save(saved_path)
+
+        return jsonify({'message': 'Bilden har sparats på servern.'})
+    except KeyError as ke:
+        return jsonify({'error': f'Nyckel saknas: {str(ke)}'}), 400
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logging.error(str(e))
+        return jsonify({'error': 'Ett fel uppstod vid sparandet av bilden.'}), 500
+
 
     
 # Visa orderhistorik
