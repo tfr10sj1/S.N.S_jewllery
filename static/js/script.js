@@ -388,9 +388,6 @@ function saveProcessedImage() {
       });
   }, "image/png"); // Specifiera MIME-typen här
 }
-
-
-
 function dataURItoBlob(dataURI) {
   var byteString = atob(dataURI.split(',')[1]);
   var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];

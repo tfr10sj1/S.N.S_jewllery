@@ -3,6 +3,8 @@ import os
 import sqlite3
 from shutil import copyfile
 import logging
+import uuid
+
 app = Flask(__name__, static_folder='./static')
 app.secret_key = 'your_secret_key_here'
 
@@ -59,30 +61,37 @@ def save_processed_data():
     product_info = session.get('product_info')
 
     if product_info:
-        # Hämta data från session
-        product_data = product_info.split(',')
-        name = product_data[0]
+        try:
+            # Hämta data från session
+            product_data = product_info.split(',')
+            name = product_data[0]
 
-        # Spara den bearbetade bilden
-        processed_image = request.files['processed_image']
-        session_num = session.get("session_num", 0) + 1
-        session["session_num"] = session_num
-        image_filename = os.path.join(app.config['ORDERS_FOLDER'], f'{name}_session_{session_num}.jpg')
-        processed_image.save(image_filename)
+            # Spara den bearbetade bilden
+            processed_image = request.files['processed_image']
+            session_num = session.get("session_num", 0)
+            image_num = session.get("image_num", 1)
+            image_filename = os.path.join(app.config['ORDERS_FOLDER'], f'{session_num}_{image_num}.png')
+            processed_image.save(image_filename)
+            session["image_num"] = image_num + 1
 
+            # Spara information i databasen
+            conn = get_items_db_connection()  # Ersätt med din funktion för att få en databasanslutning
+            cursor = conn.cursor()
+            cursor.execute('INSERT INTO items (name, price, weight, metal_type, image_url) VALUES (?, ?, ?, ?, ?)',
+                           (name, product_data[1], product_data[2], product_data[3], os.path.basename(image_filename)))
 
-        # Spara information i databasen
-        conn = get_items_db_connection()  # Ersätt med din funktion för att få en databasanslutning
-        cursor = conn.cursor()
-        cursor.execute('INSERT INTO items (name, price, weight, metal_type, image_url) VALUES (?, ?, ?, ?, ?)',
-                       (name, product_data[1], product_data[2], product_data[3], os.path.basename(image_filename)))
-        conn.commit()
-        conn.close()
+            conn.commit()
+            conn.close()
 
-        # Ta bort produktinfo från sessionen
-        session.pop('product_info', None)
-    
-    return redirect('/index')
+            # Ta bort produktinfo från sessionen
+            session.pop('product_info', None)
+
+            return redirect('/index')
+        except Exception as e:
+            logging.error(str(e))
+            return jsonify({'error': 'Ett fel uppstod vid bearbetningen av datan.'}), 500
+    else:
+        return jsonify({'error': 'Produktinfo saknas i sessionen.'}), 400
 
 @app.route('/save', methods=['POST'])
 def save_image():
@@ -94,17 +103,20 @@ def save_image():
         if uploaded_file.filename == '':
             return jsonify({'error': 'Tomt filnamn. Ingen fil har laddats upp.'}), 400
 
-        saved_path = os.path.join('static/orders', 'processed_image.png') # Use '.png' as the file extension
-        uploaded_file.save(saved_path)
+        # Hämta session-numret och bild-numret
+        session_num = session.get("session_num", 0)
+        print('Session-number:',session_num)
+        image_num = session.get("image_num", 1)
+
+        # Generera filnamnet med session-nummer och bild-nummer
+        image_filename = os.path.join(app.config['ORDERS_FOLDER'], f'{session_num}_{image_num}.png')
+        uploaded_file.save(image_filename)
+        session["image_num"] = image_num + 1
 
         return jsonify({'message': 'Bilden har sparats på servern.'})
-    except KeyError as ke:
-        return jsonify({'error': f'Nyckel saknas: {str(ke)}'}), 400
     except Exception as e:
         logging.error(str(e))
         return jsonify({'error': 'Ett fel uppstod vid sparandet av bilden.'}), 500
-
-
     
 # Visa orderhistorik
 @app.route('/orderHistory')
