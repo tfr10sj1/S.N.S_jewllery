@@ -1,9 +1,10 @@
+import json
 from flask import Flask, render_template, request, session, jsonify, redirect, send_file, send_from_directory
 import os
 import sqlite3
 from shutil import copyfile
 import logging
-import uuid
+
 
 app = Flask(__name__, static_folder='./static')
 app.secret_key = 'your_secret_key_here'
@@ -96,28 +97,39 @@ def save_processed_data():
 @app.route('/save', methods=['POST'])
 def save_image():
     try:
-        uploaded_file = request.files.get('image')  # Use 'image' as the key
+        uploaded_file = request.files.get('image')
         if not uploaded_file:
             return jsonify({'error': 'Ingen fil har laddats upp.'}), 400
 
         if uploaded_file.filename == '':
             return jsonify({'error': 'Tomt filnamn. Ingen fil har laddats upp.'}), 400
 
+        product_info = json.loads(request.form.get('product_info'))  # Hämta produktinformationen som JSON
+        print("Produktinformation:", product_info)
+
         # Hämta session-numret och bild-numret
         session_num = session.get("session_num", 0)
-        print('Session-number:',session_num)
+        print('Session-number:', session_num)
         image_num = session.get("image_num", 1)
 
-        # Generera filnamnet med session-nummer och bild-nummer
+      # Generera filnamnet med session-nummer och bild-nummer
         image_filename = os.path.join(app.config['ORDERS_FOLDER'], f'{session_num}_{image_num}.png')
         uploaded_file.save(image_filename)
         session["image_num"] = image_num + 1
 
+        # Spara produktinformationen i databasen
+        conn = get_items_db_connection()  # Ersätt med din funktion för att få en databasanslutning
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO items (name, price, weight, metal_type, image_url) VALUES (?, ?, ?, ?, ?)',
+                       (product_info['name'], product_info['price'], product_info['weight'], product_info['metal_type'], os.path.basename(image_filename)))
+
+        conn.commit()
+        conn.close()
         return jsonify({'message': 'Bilden har sparats på servern.'})
     except Exception as e:
         logging.error(str(e))
-        return jsonify({'error': 'Ett fel uppstod vid sparandet av bilden.'}), 500
-    
+        return jsonify({'error': f'Ett fel uppstod vid sparandet av bilden och produktinformationen: {str(e)}'}), 500
+
 # Visa orderhistorik
 @app.route('/orderHistory')
 def order_history():

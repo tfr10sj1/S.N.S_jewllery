@@ -78,6 +78,24 @@ document.getElementById("shape-select").addEventListener("change", function () {
 
   updateImage();
 });
+document.addEventListener("DOMContentLoaded", function() {
+  var productLinks = document.querySelectorAll(".product-link");
+
+  productLinks.forEach(function(link) {
+    link.addEventListener("click", function(event) {
+      event.preventDefault(); // Förhindra standard länkhantering
+
+      var productInfo = {
+        name: link.getAttribute("data-name"),
+        price: link.getAttribute("data-price"),
+        weight: link.getAttribute("data-weight"),
+        metal_type: link.getAttribute("data-metal_type")
+      };
+
+      saveProcessedImage(productInfo);
+    });
+  });
+});
 
 function processImage() {
   var selectedShape = document.getElementById("shape-select").value;
@@ -348,13 +366,17 @@ function polynom(sides, ctx) {
 
   }
 
-
   // Stäng banan
   ctx.closePath();
   ctx.clip();
 }
 
-function saveProcessedImage() {
+function saveProcessedImage(productInfo) {
+var productInfoElement = document.getElementById("product-info");
+var productInfoString = productInfoElement.dataset.product;
+var productInfo = JSON.parse(productInfoString);
+
+console.log(productInfo); // Skriv ut hela productInfo-objektet
   var selectedShape = document.getElementById("shape-select").value;
   var canvas = document.getElementById("output-image-canvas");
   var ctx = canvas.getContext("2d");
@@ -369,25 +391,53 @@ function saveProcessedImage() {
   clipToShape(shapeCtx, selectedShape);
   shapeCtx.drawImage(canvas, 0, 0);
 
-  // Konvertera den klippta canvasen till en Blob
-  shapeCanvas.toBlob(function (blob) {
-    var formData = new FormData();
-    formData.append('image', blob); // Använd 'image' som nyckel här
-
-    // Skicka bilden till servern
-    fetch('/save', {
-      method: 'POST',
-      body: formData
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log("Serverns svar:", data);
+    // Hämta produktinformationen från data-attributet
+    var productInfoElement = document.getElementById("product-info");
+    var productInfo = JSON.parse(productInfoElement.dataset.product);
+    // Konvertera den klippta canvasen till en Blob
+    shapeCanvas.toBlob(function (blob) {
+      var formData = new FormData();
+      formData.append('image', blob);
+  
+      // Lägg till produktinformationen i formdatan
+      formData.append('product_info', JSON.stringify(productInfo));
+  
+      // Skicka bilden och produktinformationen till servern
+      fetch('/save', {
+        method: 'POST',
+        body: formData
       })
-      .catch(error => {
-        console.error("Ett fel uppstod:", error);
-      });
-  }, "image/png"); // Specifiera MIME-typen här
-}
+        .then(response => response.json())
+        .then(data => {
+          console.log("Serverns svar:", data);
+        })
+        .catch(error => {
+          console.error("Ett fel uppstod:", error);
+        });
+    }, "image/png");
+  }
+
+// Anropa funktionen när dokumentet är laddat
+document.addEventListener("DOMContentLoaded", function() {
+  var productLinks = document.querySelectorAll(".product-link");
+
+  productLinks.forEach(function(link) {
+    link.addEventListener("click", function(event) {
+      event.preventDefault(); // Förhindra standard länkhantering
+
+      var productInfo = {
+        name: link.getAttribute("data-name"),
+        price: link.getAttribute("data-price"),
+        weight: link.getAttribute("data-weight"),
+        metal_type: link.getAttribute("data-metal_type")
+      };
+
+      saveProcessedImage(productInfo);
+    });
+  });
+});
+
+
 function dataURItoBlob(dataURI) {
   var byteString = atob(dataURI.split(',')[1]);
   var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
