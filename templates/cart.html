@@ -1,87 +1,27 @@
 <!DOCTYPE html>
-    <html>
-    <head>
-        <title>JEWELRY-STORE</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-        <style>
-            .product-list {
-                border-top: 1px solid #ddd;
-                padding-top: 10px;
-            }
-    
-            .product-row {
-                display: flex;
-                align-items: center;
-                margin-bottom: 20px;
-                border-bottom: 1px solid #ddd;
-                padding-bottom: 10px;
-            }
-    
-            .product-image {
-                flex: 1;
-                max-width: 150px;
-                margin-right: 20px;
-            }
-    
-            .product-info {
-                flex: 2;
-            }
-    
-            .remove-button {
-                flex: 1;
-                background-color: red;
-                color: white;
-                border: none;
-                padding: 5px 10px;
-                cursor: pointer;
-            }
-    
-            .total-row {
-                margin-top: 20px;
-                border-top: 1px solid #ddd;
-                padding-top: 10px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-    
-            .pay-button {
-                background-color: green;
-                color: white;
-                border: none;
-                padding: 10px 20px;
-                cursor: pointer;
-            }
+<html>
 
-            .total-row {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-top: 20px;
-                border-top: 1px solid #ccc;
-                padding-top: 10px;
-            }
+<head>
+    <title>JEWLLERY-STORE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/cart.css">
+</head>
 
-            .total-content {
-                flex: 1;
-                text-align: right;
-            }
-            .total-content:last-child {
-                margin-left: 100px; /* Justera detta värde efter behov */
-            }
-        </style>
-    </head>
-    <body>
+<body>
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-content" style="max-width:1500px">
+
         <h1>Kundvagn</h1>
 
         <!-- Knapp för att gå tillbaka till startsidan -->
-        <button id="back-button" onclick="goToHomePage()"><i class="fa fa-arrow-circle-left"></i> Tillbaka till startsidan</button>
-    
+        <button id="back-button" onclick="goToHomePage()"><i class="fa fa-arrow-circle-left"></i> Tillbaka till
+            startsidan</button>
+
         <div class="product-list">
             {% for item in ordered_items %}
             <div class="product-row">
@@ -92,19 +32,25 @@
                     <p><strong>Vikt:</strong> {{ item.weight }}</p>
                     <p><strong>Metalltyp:</strong> {{ item.metal_type }}</p>
                 </div>
-                <button class="remove-button" onclick="removeFromCart('{{ item.name }}')">Ta bort</button>
+                <button onclick="removeFromCart('{{ item.name }}', '{{ item.id }}')">Ta bort</button>
             </div>
             {% endfor %}
-            <div class="total-row">
-                <div class="total-content">
-                    <p><strong>Totalt pris:</strong></p>
-                </div>
-                <div class="total-content">
-                    <p class="total-price"><strong>{{ total_price }} SEK</strong></p>
-                </div>
-            </div>
-            <button class="pay-button">Betala</button>
 
-    </body>
-    </html>
-    
+            <p class="total-text">Totalt pris inkl. moms:</p>
+            <p class="total-price">{{ total_price }} sek</p>
+            <button class="checkout-button">Betala</button>
+
+            <footer class="w3-container w3-padding-64 w3-light-grey w3-center w3-opacity w3-xlarge"
+                style="margin-top:128px">
+                <i class="fa fa-facebook-official w3-hover-opacity"></i>
+                <i class="fa fa-instagram w3-hover-opacity"></i>
+                <i class="fa fa-snapchat w3-hover-opacity"></i>
+                <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+                <i class="fa fa-twitter w3-hover-opacity"></i>
+                <i class="fa fa-linkedin w3-hover-opacity"></i>
+                <p class="w3-medium">Powered by <a href="" target="_blank" class="w3-hover-text-green">S.J.</a></p>
+            </footer>
+            <script src="/static/js/cart.js"></script>
+</body>
+
+</html>

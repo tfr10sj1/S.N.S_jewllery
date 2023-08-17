@@ -1,5 +1,5 @@
 import json
-from flask import Flask, render_template, request, session, jsonify, redirect, send_file, send_from_directory
+from flask import Flask, render_template, request, session, jsonify, redirect, send_from_directory, url_for
 import os
 import sqlite3
 from shutil import copyfile
@@ -120,8 +120,6 @@ def save_image():
         # Spara produktinformationen i databasen
         conn = get_items_db_connection()  # Ersätt med din funktion för att få en databasanslutning
         cursor = conn.cursor()
-        '''cursor.execute('INSERT INTO items (session_num, name, price, weight, metal_type, shape, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)',
-               (session_num, product_info['name'], product_info['price'], product_info['weight'], product_info['metal_type'], product_info['shape'], os.path.basename(image_filename)))'''
         cursor.execute('INSERT INTO items (session_num, name, price, weight, metal_type, image_url) VALUES (?, ?, ?, ?, ?, ?)',
                (session_num, product_info['name'], product_info['price'], product_info['weight'], product_info['metal_type'], os.path.basename(image_filename)))
 
@@ -139,7 +137,7 @@ def cart():
 
         conn = get_items_db_connection()  # Ersätt med din funktion för att få en databasanslutning
         cursor = conn.cursor()
-        cursor.execute('SELECT name, price, weight, metal_type, image_url FROM items WHERE session_num = ?', (session_num,))
+        cursor.execute('SELECT name, price, weight, metal_type, image_url, id FROM items WHERE session_num = ?', (session_num,))
         ordered_items = cursor.fetchall()
 
         total_price = sum(item['price'] for item in ordered_items)  # Beräkna totalpriset
@@ -151,7 +149,34 @@ def cart():
         logging.error(str(e))
         return render_template('cart.html', ordered_items=[], total_price=0)
 
-
+@app.route('/remove_item/<item_id>', methods=['POST'])
+@app.route('/remove_item/<int:item_id>', methods=['POST'])
+def remove_item(item_id):
+    try:
+        # Hämta produktinformation från databasen
+        conn = get_items_db_connection()  # Anpassa detta enligt ditt system
+        cursor = conn.cursor()
+        cursor.execute('SELECT image_url FROM items WHERE id = ?', (item_id,))
+        item = cursor.fetchone()
+        
+        if item:
+            # Ta bort produkten från databasen
+            cursor.execute('DELETE FROM items WHERE id = ?', (item_id,))
+            conn.commit()
+            
+            # Ta bort bilden från orders-mappen
+            image_path = os.path.join('static', 'orders', item[0])
+            if os.path.exists(image_path):
+                os.remove(image_path)
+            
+            conn.close()
+            return {'success': True}
+        else:
+            return {'success': False}
+    except Exception as e:
+        logging.error(str(e))
+        return {'success': False}
+    
 # Visa orderhistorik
 @app.route('/orderHistory')
 def order_history():
