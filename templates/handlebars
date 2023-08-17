@@ -1,0 +1,4 @@
+Items from Database
+{{#each data}}
+{{this[1]}}
+{{/each}}
