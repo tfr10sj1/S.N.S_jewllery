@@ -116,12 +116,14 @@ def save_image():
         image_filename = os.path.join(app.config['ORDERS_FOLDER'], f'{session_num}_{image_num}.png')
         uploaded_file.save(image_filename)
         session["image_num"] = image_num + 1
-
+        print('image_filename', image_filename)
         # Spara produktinformationen i databasen
         conn = get_items_db_connection()  # Ersätt med din funktion för att få en databasanslutning
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO items (name, price, weight, metal_type, image_url) VALUES (?, ?, ?, ?, ?)',
-                       (product_info['name'], product_info['price'], product_info['weight'], product_info['metal_type'], os.path.basename(image_filename)))
+        '''cursor.execute('INSERT INTO items (session_num, name, price, weight, metal_type, shape, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)',
+               (session_num, product_info['name'], product_info['price'], product_info['weight'], product_info['metal_type'], product_info['shape'], os.path.basename(image_filename)))'''
+        cursor.execute('INSERT INTO items (session_num, name, price, weight, metal_type, image_url) VALUES (?, ?, ?, ?, ?, ?)',
+               (session_num, product_info['name'], product_info['price'], product_info['weight'], product_info['metal_type'], os.path.basename(image_filename)))
 
         conn.commit()
         conn.close()
@@ -129,6 +131,26 @@ def save_image():
     except Exception as e:
         logging.error(str(e))
         return jsonify({'error': f'Ett fel uppstod vid sparandet av bilden och produktinformationen: {str(e)}'}), 500
+    
+@app.route('/cart')
+def cart():
+    try:
+        session_num = session.get('session_num', 0)
+
+        conn = get_items_db_connection()  # Ersätt med din funktion för att få en databasanslutning
+        cursor = conn.cursor()
+        cursor.execute('SELECT name, price, weight, metal_type, image_url FROM items WHERE session_num = ?', (session_num,))
+        ordered_items = cursor.fetchall()
+
+        total_price = sum(item['price'] for item in ordered_items)  # Beräkna totalpriset
+
+        conn.close()
+
+        return render_template('cart.html', ordered_items=ordered_items, total_price=total_price)
+    except Exception as e:
+        logging.error(str(e))
+        return render_template('cart.html', ordered_items=[], total_price=0)
+
 
 # Visa orderhistorik
 @app.route('/orderHistory')
