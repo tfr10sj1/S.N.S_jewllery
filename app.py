@@ -6,7 +6,7 @@ from shutil import copyfile
 import logging
 
 
-app = Flask(__name__, static_folder='./static')
+app = Flask(__name__, static_url_path=''')
 app.secret_key = 'your_secret_key_here'
 
 # Konfigurera sökvägen till "orders" mappen
@@ -41,7 +41,7 @@ def get_webshop_db_connection():
     conn.close()
     return products
 
-@app.route('/index')
+@app.route('/')
 def index():
     products = get_webshop_db_connection() 
     return render_template('index.html', products= products)
