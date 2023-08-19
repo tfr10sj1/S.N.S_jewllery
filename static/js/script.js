@@ -1,6 +1,6 @@
 // Funktion för att gå tillbaka till startsidan när knappen klickas
 function goToHomePage() {
-  window.location.href = "/index";
+  window.location.href = "/";
 }
 
 // Funktion för att uppdatera bilden när något ändras

@@ -6,7 +6,7 @@ from shutil import copyfile
 import logging
 
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__, static_folder='./static')
 app.secret_key = 'your_secret_key_here'
 
 # Konfigurera sökvägen till "orders" mappen
