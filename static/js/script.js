@@ -1,3 +1,34 @@
+
+  // Ersätt med din Firebase-projektkonfiguration
+  var firebaseConfig = {
+    apiKey: "AIzaSyDI_bZFy1g73Hq_SLZcgy3Y0w4SWPOmAu0",
+    authDomain: "sns-jewllery.firebaseapp.com",
+    projectId: "sns-jewllery",
+    storageBucket: "sns-jewllery.appspot.com",
+    messagingSenderId: "390632077656",
+    appId: "1:390632077656:web:a5b84a0597da42c78c8d2d",
+    measurementId: "G-VR33F4VQP4"
+  };
+
+  // Initialisera Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Hämta referens till Firestore-databasen
+  var db = firebase.firestore();
+
+  // Hämta data från Firestore och uppdatera din HTML
+// Fetch data from Firestore and update HTML
+db.collection('webshop').get().then((querySnapshot) => {
+  querySnapshot.forEach((doc) => {
+    var data = doc.data();
+    // Update your HTML with data here
+  });
+});
+
+
+
+
+
 // Funktion för att gå tillbaka till startsidan när knappen klickas
 function goToHomePage() {
   window.location.href = "/";

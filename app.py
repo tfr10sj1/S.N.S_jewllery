@@ -4,10 +4,16 @@ import os
 import sqlite3
 from shutil import copyfile
 import logging
-
+import firebase_admin  # Import firebase_admin module
+from firebase_admin import credentials, firestore  # Import specific submodules
 
 app = Flask(__name__, static_folder='./static')
 app.secret_key = 'your_secret_key_here'
+
+# Initialize Firebase with your project's credentials
+cred = credentials.Certificate("credentials.json")
+firebase_app = firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 # Konfigurera sökvägen till "orders" mappen
 app.config['ORDERS_FOLDER'] = os.path.join(app.static_folder, 'orders')
