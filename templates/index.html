@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>JEWLLERY-STORE</title>
   <meta charset="UTF-8">
@@ -12,7 +11,6 @@
   <!-- Lägg dessa script-taggar i <head> av din HTML -->
   <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
-
 </head>
 
 <body>
@@ -66,13 +64,13 @@
     <!-- Photo Grid -->
     <div class="w3-center">
       <div class="w3-row" id="myGrid" style="margin-bottom:40px">
+        <!-- Loop through products -->
         {% for product in products %}
         <div class="w3-third">
-          <a
-            href="/processImage?name={{ product[0] }}&price={{ product[1] }}&weight={{ product[2] }}&metal_type={{ product[3] }}">
-            <img src="/static/images/bild{{ loop.index }}.jpg" alt="Smycken" style="width:50%">
+          <a href="/processImage?name={{ product.name }}&price={{ product.price }}&weight={{ product.weight }}&metal_type={{ product.metal_type }}">
+            <img src="static/images/{{product.image_url }}" alt="Smycken" style="width:50%">
           </a>
-          <p>{{ product[0] }} <br><b>Pris: {{ product[1] }} sek</b></p>
+          <p>{{ product.name }} <br><b>Pris: {{ product.price }} sek</b></p>
         </div>
         {% endfor %}
       </div>
@@ -122,5 +120,4 @@
     </script>
 
 </body>
-
 </html>
