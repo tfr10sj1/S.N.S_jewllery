@@ -1,20 +1,4 @@
-// Ersätt med din Firebase-projektkonfiguration
-const firebaseConfig = {
-  apiKey: "AIzaSyDI_bZFy1g73Hq_SLZcgy3Y0w4SWPOmAu0",
-  authDomain: "sns-jewllery.firebaseapp.com",
-  databaseURL: "https://sns-jewllery-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "sns-jewllery",
-  storageBucket: "sns-jewllery.appspot.com",
-  messagingSenderId: "390632077656",
-  appId: "1:390632077656:web:a5b84a0597da42c78c8d2d",
-  measurementId: "G-VR33F4VQP4"
-};
-
-// Initialisera Firebase
-firebase.initializeApp(firebaseConfig);
-
-// Hämta referens till Firestore-databasen
-var db = firebase.firestore();
+// ... (din kod för firebaseConfig och initialisering)
 
 // Hämta data från Firestore och uppdatera din HTML
 db.collection("din_kollektion").get().then((querySnapshot) => {
@@ -44,7 +28,7 @@ db.collection("din_kollektion").get().then((querySnapshot) => {
     var removeButton = document.createElement("button");
     removeButton.textContent = "Ta bort";
     removeButton.onclick = function() {
-      removeFromCart(data.name, doc.id);
+      removeFromCart(data.image_url);
     };
     productRow.appendChild(removeButton);
 
@@ -52,14 +36,14 @@ db.collection("din_kollektion").get().then((querySnapshot) => {
   });
 });
 
-function removeFromCart(productName, itemId) {
+function removeFromCart(itemId) {
   fetch('/remove_item/' + itemId, {
     method: 'POST',
   })
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      alert(productName + " har tagits bort från kundvagnen.");
+      alert("Produkten har tagits bort från kundvagnen.");
       window.location.reload(); // Uppdatera sidan efter borttagningen
     } else {
       alert("Det uppstod ett fel. Försök igen senare.");
@@ -69,9 +53,4 @@ function removeFromCart(productName, itemId) {
     console.error('Error:', error);
     alert("Ett fel uppstod. Försök igen senare.");
   });
-}
-
-// Funktion för att gå tillbaka till startsidan när knappen klickas
-function goToHomePage() {
-  window.location.href = "/";
 }

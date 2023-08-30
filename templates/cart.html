@@ -36,7 +36,7 @@
                     <p><strong>Vikt:</strong> {{ item.weight }}</p>
                     <p><strong>Metalltyp:</strong> {{ item.metal_type }}</p>
                 </div>
-                <button onclick="removeFromCart('{{ item.name }}', '{{ item.id }}')">Ta bort</button>
+                <button onclick="removeFromCart('{{ item.name }}', '{{ item.image_url}}')">Ta bort</button>
             </div>
             {% endfor %}
         </div>

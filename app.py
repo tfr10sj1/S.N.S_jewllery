@@ -113,7 +113,7 @@ def cart():
         
         # Hämta produkter från Firebase-databasen
         ordered_items = get_items_from_firebase(session_num)
-        total_price = sum(item['price'] for item in ordered_items)  # Beräkna totalpriset
+        total_price = sum(int(item['price']) for item in ordered_items)  # Beräkna totalpriset
 
         return render_template('cart.html', ordered_items=ordered_items, total_price=total_price)
     except Exception as e:
@@ -122,40 +122,29 @@ def cart():
 
 def get_items_from_firebase(session_num):
     items_ref = db_ref.child('items')
-    #print(session_num)
-    #print(items_ref.order_by_child('session_num').get())
-  
-
     ordered_items = []
     query_result = items_ref.get()
 
     for key, item in query_result.items():
-        print(type(item['session_num']), type((session_num)))
-        print(item)
         ordered_items.append(item)
             
     return ordered_items
 
-
-@app.route('/remove_item/<int:item_id>', methods=['POST'])
+@app.route('/remove_item/<string:item_id>', methods=['POST'])
 def remove_item(item_id):
     try:
-        # Ta bort produkten från Firebase-databasen
         if remove_item_from_firebase(item_id):
-            return {'success': True}
+            return jsonify({'success': True})
         else:
-            return {'success': False}
+            return jsonify({'success': False})
     except Exception as e:
         logging.error(str(e))
-        return {'success': False}
+        return jsonify({'success': False})
 
 def remove_item_from_firebase(item_id):
     items_ref = db_ref.child('items')
-    item_ref = items_ref.child(item_id)
-    if item_ref.get():
-        item_ref.delete()
-        return True
-    return False
+    items_ref.child(item_id).delete()
+    return True
 
 # Visa orderhistorik
 @app.route('/orderHistory')
