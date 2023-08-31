@@ -10,9 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="static/style.css">
     <link rel="stylesheet" type="text/css" href="static/cart.css">
-    <!-- Lägg dessa script-taggar i <head> av din HTML -->
-    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
     <script src="/static/js/cart.js"></script>
 </head>
 
@@ -31,12 +28,14 @@
             <div class="product-row">
                 <img src="/static/orders/{{ item.image_url }}" alt="{{ item.name }}" class="product-image">
                 <div class="product-info">
+                    <p><strong>Id:</strong> {{item.id}}</p>
                     <p><strong>Namn:</strong> {{ item.name }}</p>
                     <p><strong>Pris:</strong> {{ item.price }}</p>
                     <p><strong>Vikt:</strong> {{ item.weight }}</p>
                     <p><strong>Metalltyp:</strong> {{ item.metal_type }}</p>
                 </div>
-                <button onclick="removeFromCart('{{ item.name }}', '{{ item.image_url}}')">Ta bort</button>
+                <button onclick="removeFromCart('{{ item.id }}','{{ item.image_url}}')">Ta bort</button>
+                
             </div>
             {% endfor %}
         </div>
@@ -54,6 +53,9 @@
                 <i class="fa fa-linkedin w3-hover-opacity"></i>
                 <p class="w3-medium">Powered by <a href="" target="_blank" class="w3-hover-text-green">S.J.</a></p>
             </footer>
+            <script src="/static/js/backend.js"></script>
+           
+      
            
 </body>
 

@@ -1,34 +1,21 @@
+document.addEventListener("DOMContentLoaded", function() {
+  var productLinks = document.querySelectorAll(".product-link");
 
-  // Ersätt med din Firebase-projektkonfiguration
-  var firebaseConfig = {
-    apiKey: "AIzaSyDI_bZFy1g73Hq_SLZcgy3Y0w4SWPOmAu0",
-    authDomain: "sns-jewllery.firebaseapp.com",
-    projectId: "sns-jewllery",
-    storageBucket: "sns-jewllery.appspot.com",
-    messagingSenderId: "390632077656",
-    appId: "1:390632077656:web:a5b84a0597da42c78c8d2d",
-    measurementId: "G-VR33F4VQP4"
-  };
+  productLinks.forEach(function(link) {
+    link.addEventListener("click", function(event) {
+      event.preventDefault(); // Förhindra standard länkhantering
 
-  // Initialisera Firebase
-  firebase.initializeApp(firebaseConfig);
+      var productInfo = {
+        name: link.getAttribute("data-name"),
+        price: link.getAttribute("data-price"),
+        weight: link.getAttribute("data-weight"),
+        metal_type: link.getAttribute("data-metal_type")
+      };
 
-  // Hämta referens till Firestore-databasen
-  var db = firebase.firestore();
-
-  // Hämta data från Firestore och uppdatera din HTML
-// Fetch data from Firestore and update HTML
-db.collection('webshop').get().then((querySnapshot) => {
-  querySnapshot.forEach((doc) => {
-    var data = doc.data();
-    // Update your HTML with data here
+      saveProcessedImage(productInfo);
+    });
   });
 });
-
-
-
-
-
 // Funktion för att gå tillbaka till startsidan när knappen klickas
 function goToHomePage() {
   window.location.href = "/";
@@ -106,28 +93,8 @@ document.getElementById("upload-image").addEventListener("change", function () {
 
 // Lyssna på ändringar i "Välj form" inputfältet
 document.getElementById("shape-select").addEventListener("change", function () {
-
-  updateImage();
+  processImage();
 });
-document.addEventListener("DOMContentLoaded", function() {
-  var productLinks = document.querySelectorAll(".product-link");
-
-  productLinks.forEach(function(link) {
-    link.addEventListener("click", function(event) {
-      event.preventDefault(); // Förhindra standard länkhantering
-
-      var productInfo = {
-        name: link.getAttribute("data-name"),
-        price: link.getAttribute("data-price"),
-        weight: link.getAttribute("data-weight"),
-        metal_type: link.getAttribute("data-metal_type")
-      };
-
-      saveProcessedImage(productInfo);
-    });
-  });
-});
-
 function processImage() {
   var selectedShape = document.getElementById("shape-select").value;
 
@@ -440,9 +407,12 @@ console.log(productInfo); // Skriv ut hela productInfo-objektet
       })
         .then(response => response.json())
         .then(data => {
+          alert("Produkten har sparats i din vagn.");
+          window.location.reload(); // Uppdatera sidan efter borttagningen
           console.log("Serverns svar:", data);
         })
         .catch(error => {
+          alert("Det uppstod ett fel. Försök igen senare.");
           console.error("Ett fel uppstod:", error);
         });
     }, "image/png");

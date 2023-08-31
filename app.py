@@ -1,5 +1,5 @@
 import json
-from flask import Flask, render_template, request, session, jsonify, redirect, send_from_directory
+from flask import Flask, render_template, request, session, jsonify, send_from_directory
 import os
 import logging
 import firebase_admin
@@ -97,8 +97,11 @@ def save_image():
 
 def save_data_to_realtime_db(name, price, weight, metal_type, image_filename, session_num):
     items_ref = db_ref.child('items')
-    new_item_ref = items_ref.push()
+    new_item_ref = items_ref.push()  # Lägg till data med .push() och få referensen till det nya objektet
+    new_item_key = new_item_ref.key  # Hämta det genererade unika ID:et
+    print(new_item_key)
     new_item_ref.set({
+        'id' : new_item_key,
         'name': name,
         'price': price,
         'weight': weight,
@@ -106,6 +109,8 @@ def save_data_to_realtime_db(name, price, weight, metal_type, image_filename, se
         'image_url': image_filename,
         'session_num': session_num
     })
+
+    return new_item_key  # Returnera det genererade unika ID:et
 @app.route('/cart')
 def cart():
     try:
@@ -126,9 +131,14 @@ def get_items_from_firebase(session_num):
     query_result = items_ref.get()
 
     for key, item in query_result.items():
-        ordered_items.append(item)
+        
+        if item.get('session_num') == session_num:
+            print(item.get('session_num') == session_num)
+            ordered_items.append(item)
             
     return ordered_items
+
+# ... (din övriga kod)
 
 @app.route('/remove_item/<string:item_id>', methods=['POST'])
 def remove_item(item_id):
@@ -142,8 +152,9 @@ def remove_item(item_id):
         return jsonify({'success': False})
 
 def remove_item_from_firebase(item_id):
+    print(item_id)
     items_ref = db_ref.child('items')
-    items_ref.child(item_id).delete()
+    items_ref.child(item_id).delete()  # Använd .remove() istället för .delete()
     return True
 
 # Visa orderhistorik
